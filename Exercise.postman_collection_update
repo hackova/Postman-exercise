@@ -1,0 +1,550 @@
+{
+	"info": {
+		"_postman_id": "133ceaa4-e183-4ea8-ba50-c326fb178c2e",
+		"name": "Exercise",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{user_email}}\",\r\n    \"name\": \"{{user_name}}\",\r\n    \"gender\": \"{{user_gender}}\",\r\n    \"status\": \"{{user_status}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_users}}",
+					"host": [
+						"{{url_users}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Getting ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.environment.set(\"user_id\", jsonData[0].id);\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/?name={{user_name}}",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{user_name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test - user exists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"\r",
+							"pm.test(\"User exists\", function () {\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.expect(jsonData[0].email).to.eql(pm.environment.get(\"user_email\"));\r",
+							"\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/?email={{user_email}}",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "{{user_email}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test - right user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Right user\", function () {\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.expect(jsonData[0].email).to.eql(pm.environment.get(\"user_email\"));\r",
+							"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/?name={{user_name}}",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{user_name}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create article + get to variable",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.environment.set(\"post_id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n    \"title\": \"Článek\",\r\n    \"body\": \"Testovací článek č. 1\"\r\n\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_users}}/{{user_id}}/posts",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						"{{user_id}}",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test - article created",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							" pm.test(\"Article exists\", function () {\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.expect(jsonData[0].id).to.eql(pm.environment.get(\"post_id\"));\r",
+							"\r",
+							"}); "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/{{user_id}}/posts",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						"{{user_id}}",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.environment.set(\"comment_id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"name\": \"{{user_name}}\",\r\n\"email\": \"{{user_email}}\",\r\n\"body\": \"Testovací komentář\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/posts/{{post_id}}/comments",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"posts",
+						"{{post_id}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test - comment created",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							" pm.test(\"Comment exists\", function () {\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.expect(jsonData[0].id).to.eql(pm.environment.get(\"comment_id\"));\r",
+							"\r",
+							"}); "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/posts/{{post_id}}/comments",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"posts",
+						"{{post_id}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.environment.set(\"todo_id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Test\",\r\n    \"status\": \"pending\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{user_id}}/todos",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{user_id}}",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test - todo created",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							" pm.test(\"Todo exists\", function () {\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.expect(jsonData[0].id).to.eql(pm.environment.get(\"todo_id\"));\r",
+							"\r",
+							"}); "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/{{user_id}}/todos",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						"{{user_id}}",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Name change",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"name\": \"test2\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_users}}/{{user_id}}",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test- name change",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Name change\", function () {\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.expect(jsonData.name).to.not.eql(pm.environment.get(\"user_name\"));\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/{{user_id}}",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deleting user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/{{user_id}}",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Is deleted",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_users}}/{{user_email}}",
+					"host": [
+						"{{url_users}}"
+					],
+					"path": [
+						"{{user_email}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "d25923d89514a9e5054d3c4d6821162aa17dd660b39d53ca40d19a149978a4ba",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
